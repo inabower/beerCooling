@@ -4,14 +4,15 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>冷凍庫でビールを冷やす</title>
 
 		<link rel="stylesheet" href="css/reset.css">
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.4/css/all.css">
+		<link rel="stylesheet" href="css/theme/myTheme.css">
 
 		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/monokai.css">
+		<link rel="stylesheet" href="lib/css/zenburn.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -25,8 +26,149 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section data-markdown>
+    <script type="text/template">
+# 冷凍庫でビールを冷やす 
+
+〜趣味レーションのすすめ〜  
+
+稲葉竜一  
+    </script>
+				</section>
+				<section data-markdown="md/1.introduction.md" data-separator="^\n---\n$" data-separator-vertical="^\n>>>\n$"></section>
+				<section data-markdown="md/2.beer.md" data-separator="^\n---\n$" data-separator-vertical="^\n>>>\n$"></section>
+        <section>
+            <section>
+               <h1>今回の方針</h1>
+            </section>
+				    <section data-markdown>
+    <script type="text/template">
+## 作戦を立てる
+
+![](fig/inter.png)
+    </script>
+            </section>
+				    <section data-markdown>
+    <script type="text/template">
+## 計算のながれ
+
+- 1. 外側の定常熱流体
+  - 圧縮性・層流・理想気体（空気）
+- 2. 内側の非定常熱流体
+  - 圧縮性・層流・密度は温度依存
+
+![](fig/calc.png)
+    </script>
+            </section>
+            <section>
+               <h2>まずはメッシュから→</h2>
+            </section>
+        </section>
+        <section>
+            <section data-markdown="md/3.salome.md" data-separator="^\n---\n$" data-separator-vertical="^\n>>>\n$"></section>
+        </section>
+
+        <section>
+            <section>
+               <h1>外気の計算</h1>
+               <h3>熱伝達率を計算しよう</h3>
+            </section>
+            <section>
+               <h2>作成したメッシュと計算条件</h2>
+            </section>
+            <section data-background-iframe="out.html" data-background-interactive>
+              <div class="fragment fade-in-then-out" style="position: absolute; width: 70%; left: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.5), 0 5px 25px rgba(0,0,0,0.2); background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px; font-size: 25px; text-align: left;">
+                <h3>メッシュ</h3>
+                <ul>
+                <li>5°のwedge型</li>
+                <li>メッシュ数：10136</li>
+                <li>最大非直交性：48.3°</li>
+                <li>wall_liqとwall_gasの熱流束を求めるのが目的</li>
+                </ul>
+                <h3>計算条件</h3>
+                <ul>
+                <li>ソルバー：buoyantSimpleFoam(OpenFOAM-v1906)</li>
+                <li>温度境界条件：全部fixedValue</li>
+                <li>速度境界条件：全部noSlip</li>
+                <li>functionObjects:wallHeatFlux(熱伝達率を求める)</li>
+                </ul>
+              </div>
+            </section>
+            <section data-markdown="md/4.out.md" data-separator="^\n---\n$" data-separator-vertical="^\n>>>\n$"></section>
+        </section>
+
+        <section>
+            <section>
+               <h1>内部の計算</h1>
+               <h3>温度変化を計算しよう</h3>
+            </section>
+            <section>
+               <h2>作成したメッシュと計算条件</h2>
+            </section>
+            <section data-background-iframe="liq.html" data-background-interactive>
+              <div class="fragment" style="position: absolute; width: 70%; left: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.5), 0 5px 25px rgba(0,0,0,0.2); background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px; font-size: 25px; text-align: left;">
+                <h3>メッシュ</h3>
+                <ul>
+                <li>5°のwedge型</li>
+                <li>メッシュ数：255</li>
+                <li>最大非直交性：52.9°</li>
+                </ul>
+                <h3>計算条件</h3>
+                <ul>
+                <li>ソルバー：buoyantPimpleFoam(OpenFOAM-v1906)</li>
+                <li>温度境界条件</li>
+                    <ul>
+                    <li>上面側面:externalWallHeatFluxTemperature</li>
+                    <li>上面には1cm Air＋15μm Al, 側面には150μm Alの熱伝導率</li>
+                    <li>下面:zeroGradient</li>
+                    </ul>
+                <li>速度境界条件</li>
+                    <ul>
+                    <li>上面:slip</li>
+                    <li>側面下面:noSlip</li>
+                    </ul>
+                </ul>
+              </div>
+            </section>
+            <section>
+               <h2>物性値の調査</h2>
+            </section>
+            <section data-background-iframe="html/2.liq.html" data-background-interactive>
+              <div style="position: absolute; width: 50%; right: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.5), 0 5px 25px rgba(0,0,0,0.2); background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px; font-size: 25px; text-align: left;">
+                <h2>Jupyterによる物性の計算</h2>
+                <p>5wt%EtOHの物性値をPython(Jupyter)で計算する</p>
+                <p>Jupyterだとメモとして残しておくこともできる</p>
+                <p>内部流体の物性値は温度依存の多次式近似（polynomial）</p>
+              </div>
+            </section>
+            <section data-markdown="md/5.result.md" data-separator="^\n---\n$" data-separator-vertical="^\n>>>\n$"></section>
+        </section>
+        <section>
+            <section>
+                <h1>趣味レーションで得られるもの</h1>
+            </section>
+            <section>
+                <h2>今回行ったこと</h2>
+                <ol>
+                    <li>SALOMEのSHAPER機能でメッシング</li>
+                    <li>OpenFOAMで熱流体計算</li>
+                    <li>PyFoamによるパラメータスタディ</li>
+                    <li>Jupyterによるポスト処理</li>
+                    <li>自宅の器具で実証実験</li>
+                    <li>Reveal.jsで発表</li>
+               <img src="fig/outline.png" alt="drawing">
+            </section>
+            <section>
+                <h2>ここから更に・・・</h2>
+                <img src="fig/andmore.png" alt="drawing">
+
+            </section>
+            <section data-markdown="md/6.simulation.md" data-separator="^\n---\n$" data-separator-vertical="^\n>>>\n$"></section>
+        </section>
+        <section data-markdown="md/7.output.md" data-separator="^\n---\n$" data-separator-vertical="^\n>>>\n$"></section>
+        <section>
+        <h2>よい趣味レーションライフを！</h2>
+        </section>
 			</div>
 		</div>
 

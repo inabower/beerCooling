@@ -1043,6 +1043,7 @@ body {
   z-index: 2; }
 
 .print-pdf .reveal .slide-background {
+  background-image: url('../../fig/beer.png');
   opacity: 1 !important;
   visibility: visible !important; }
 
